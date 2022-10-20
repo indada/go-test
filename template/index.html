@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>go</title>
+    <script src="http://lib.sinaapp.com/js/jquery/1.9.1/jquery-1.9.1.min.js"></script>
+</head>
+<body>
+<h1>hi:{{.User}}</h1>
+<input id="tt">
+<button id="bt">发送</button>
+<p id="pp"></p>
+</body>
+</html>
+<script>
+
+    var user = "{{.User}}"
+    console.log(user)
+    var msg = "Hello WebSockets!"
+    var postJson = {
+        "user":user,
+        "msg":msg
+    }
+    var ws = new WebSocket("ws://localhost:2303/client?user="+user);
+    //连接打开时触发
+    ws.onopen = function(evt) {
+        ws.send(msg);//JSON.stringify(postJson)
+        console.log("Connection open ... send",msg)
+    };
+    //接收到消息时触发
+    ws.onmessage = function(evt) {
+        console.log("Received Message: " + evt.data);
+        add = evt.data+"<br>"
+        $("#pp").prepend(add);
+    };
+    //连接关闭时触发
+    ws.onclose = function(evt) {
+        console.log("Connection closed.");
+    };
+
+    $(document).ready(function(){
+        $("#bt").click(function (){
+            msg = $("#tt").val()
+            ws.send(msg);
+            console.log("send",msg)
+        })
+
+    });
+</script>
